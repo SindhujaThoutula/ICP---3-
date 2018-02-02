@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mashup Application</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js" type="application/javascript"></script>
+</head>
+<body>
+<div ng-app="foodapi" ng-controller="foodctrl">
+    <input type="text"  ng-model="foodid" id="foodid"/>
+    <!--<input type="text"  ng-model="cityid" id="cityid" />-->
+    <button id="btn" ng-click="getFoodDetails()"> Show Food Details </button>
+    <button id="audio" ng-click="getFoodSpeech()"> Listen Food Details </button>
+    <br/>
+    <br/>
+    <div class="form" style="padding: 10px; margin:20px;">
+        <h5 style="font-family: 'Verdana'; color: #0b0b0b;"><b><u>Food Report</u></b></h5>
+
+        <table>
+            <tr>
+                <td align="left"><b>Calories : </b></td>
+                <td align="left"> {{calories}}</td>
+            </tr>
+            <tr>
+                <td align="left"><b>Total Weight : </b></td>
+                <td align="left"> {{totalWeight}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="currentIcon" ng-bind-html-unsafe="currentIcon.html"></div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script>
+    angular.module('foodapi', [])
+        .controller('foodctrl', function($scope, $http) {
+
+            $scope.getFoodDetails = function() {
+                var foodid = document.getElementById('foodid').value;
+                $http.get('https://api.edamam.com/api/nutrition-data?app_id=bbb3122f&app_key=8599abd4c0c0854e7fca4cfbbc529687&ingr='+foodid+'').success(function(data) {
+                    console.log(data);
+                    $scope.calories = data.calories;
+                    $scope.totalWeight = data.totalWeight;
+                    $scope.currentIcon = {
+                        html: "<img src='" + icon + "'/>"
+                    }
+
+                })
+            }
+            $scope.getFoodSpeech = function () {
+                var text = document.getElementById('foodid').value;
+                window.location.href = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&text="+text+"&voice=en-US_MichaelVoice";
+
+            }
+
+        });
+
+
+</script>
